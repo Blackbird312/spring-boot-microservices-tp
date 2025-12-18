@@ -146,10 +146,23 @@ pipeline {
 
         stage('Deploy') {
             when { branch 'main' }
-            steps {
-                echo 'Deploying application...'
-                // sh 'kubectl apply -f k8s-deployment.yaml'
-            }
+              steps {
+                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GCP_KEY')]) {
+                  sh '''
+                    gcloud auth activate-service-account --key-file=$GCP_KEY
+
+                    gcloud config set project spring-boot-microservices-tp-123456
+
+                    gcloud config set run/region europe-west3
+
+                    gcloud run deploy runner-ms \
+                      --image docker.io/testblackbird/spring-boot-microservices-tp:0.0.1 \
+                      --platform managed \
+                      --allow-unauthenticated \
+                      --port 8080
+                  '''
+                }
+              }
         }
     }
 

@@ -56,7 +56,20 @@ pipeline {
                 }
             }
         }
-
+        stage('Sonar Scan'){
+            steps{
+                withCredentials([string(credentialsId: 'scannerToken', variable: 'SONAR_TOKEN')]) {
+                    echo "First 5 letters : ${SONAR_TOKEN.substring(0, 5)}..."
+                    sh '''
+                        mvn sonar:sonar \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=$SONAR_TOKEN \
+                            -Dsonar.projectKey=spring-boot-microservices-tp \
+                            -Dsonar.projectName=spring-boot-microservices-tp
+                    '''
+                }
+            }
+        }
         stage('Package') {
             steps {
                 // Package ONLY runner-ms (and build required modules) without rerunning tests

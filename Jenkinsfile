@@ -151,7 +151,7 @@ pipeline {
                   sh '''
                     gcloud auth activate-service-account --key-file=$GCP_KEY
 
-                    gcloud config set project spring-boot-microservices-tp-123456
+                    gcloud config set project spring-boot-microservices-tp
 
                     gcloud config set run/region europe-west3
 
@@ -159,7 +159,8 @@ pipeline {
                       --image docker.io/testblackbird/spring-boot-microservices-tp:0.0.1 \
                       --platform managed \
                       --allow-unauthenticated \
-                      --port 8080
+                      --port 8080 \
+                      --service-account jenkins-deployer@spring-boot-microservices-tp.iam.gserviceaccount.com
                   '''
                 }
               }
